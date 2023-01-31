@@ -5,6 +5,22 @@
   const newNote = ref("");
   const notes = ref([]);
 
+  function getRandomColor() {
+    return "hsl(" + Math.random() * 360 + ", 100%, 75%)";
+     
+  }
+
+  const addNote = () => {
+    notes.value.push({
+      id: Math.floor(Math.random() * 1000000), //new Date().toISOString(),
+      text: newNote.value,
+      date: new Date(),
+      backgroundColor: getRandomColor(),
+    });
+    showModal.value = false;
+    newNote.value = "";
+  }
+
 </script>
 
 <template>
@@ -12,7 +28,7 @@
     <div v-if="showModal" class="overlay">
       <div class="modal">
         <textarea v-model="newNote" name="note" id="note" cols="30" rows="10"></textarea>
-        <button>Add Note</button>
+        <button @click="addNote">Add Note</button>
         <button @click="showModal=false" class="close">Close</button>
       </div>
     </div>
@@ -22,14 +38,11 @@
         <button @click="showModal = !showModal">+</button>
       </header>
       <div class="card-container">
-        <div class="card">
-          <p class="main-text">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Iusto, dolor dolore maiores similique expedita vel?</p>
-          <p class="date">2023-01-25</p>
+        <div v-for="note in notes" :key="note.id" class="card" :style="{backgroundColor: note.backgroundColor}">
+          <p class="main-text">{{ note.text }}</p>
+          <p class="date">{{ note.date.toLocaleDateString("en-UK") }}</p>
         </div>
-        <div class="card">
-          <p class="main-text">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Iusto, dolor dolore maiores similique expedita vel?</p>
-          <p class="date">2023-01-25</p>
-        </div>        
+      
       </div>
     </div>
   </main>
