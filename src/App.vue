@@ -3,22 +3,34 @@
 
   const showModal = ref(false);
   const newNote = ref("");
+  const errorMessage = ref("");
   const notes = ref([]);
-
+  
+  // this from inet; generate light bg-color for card; 
   function getRandomColor() {
-    return "hsl(" + Math.random() * 360 + ", 100%, 75%)";
-     
+    return "hsl(" + Math.random() * 360 + ", 100%, 75%)"; 
   }
 
   const addNote = () => {
+    if (newNote.value.length < 10) {
+      return errorMessage.value = "Note needs to be 10 chars or more";
+    }
     notes.value.push({
       id: Math.floor(Math.random() * 1000000), //new Date().toISOString(),
       text: newNote.value,
       date: new Date(),
       backgroundColor: getRandomColor(),
     });
+    //showModal.value = false;
+    //newNote.value = "";
+    //errorMessage.value = "";
+    closeModal();
+  }
+
+  const closeModal = () => {
     showModal.value = false;
     newNote.value = "";
+    errorMessage.value = "";    
   }
 
 </script>
@@ -27,9 +39,11 @@
   <main>
     <div v-if="showModal" class="overlay">
       <div class="modal">
-        <textarea v-model="newNote" name="note" id="note" cols="30" rows="10"></textarea>
+        <textarea v-model.trim="newNote" name="note" id="note" cols="30" rows="10"></textarea>
+        <!-- если нет ошибки, errorMessage="", и v-if="errorMessage" is false -->
+        <p v-if="errorMessage">{{errorMessage}}</p>
         <button @click="addNote">Add Note</button>
-        <button @click="showModal=false" class="close">Close</button>
+        <button @click="closeModal" class="close">Close</button>
       </div>
     </div>
     <div class="container">
@@ -38,7 +52,8 @@
         <button @click="showModal = !showModal">+</button>
       </header>
       <div class="card-container">
-        <div v-for="note in notes" :key="note.id" class="card" :style="{backgroundColor: note.backgroundColor}">
+        <div v-for="note in notes" :key="note.id" class="card" 
+          :style="{backgroundColor: note.backgroundColor}">
           <p class="main-text">{{ note.text }}</p>
           <p class="date">{{ note.date.toLocaleDateString("en-UK") }}</p>
         </div>
@@ -142,4 +157,11 @@
     background-color: crimson;
     margin-top: 10px;
   }
+.modal textarea {
+  font-size: 12pt;
+}
+
+.modal p {
+  color: rgb(193, 15, 15);;
+}
 </style>
