@@ -33,6 +33,16 @@
     errorMessage.value = "";    
   }
 
+  const deleteCard = (NoteId) => {
+    // del from array but bugs in provide/inject :( 
+    notes.value = notes.value.filter((note) => note.id !== NoteId );
+    //console.log(NoteId, notes.value);    
+    
+    // del from array and no bugs in provide/inject :)
+    //const noteIndex = notes.value.findIndex((note) => note.id === NoteId); 
+    //notes.value.splice(noteIndex, 1);
+  }
+
 </script>
 
 <template>
@@ -55,7 +65,12 @@
         <div v-for="note in notes" :key="note.id" class="card" 
           :style="{backgroundColor: note.backgroundColor}">
           <p class="main-text">{{ note.text }}</p>
-          <p class="date">{{ note.date.toLocaleDateString("en-UK") }}</p>
+          <div class="card-footer">
+            <p class="date">{{ note.date.toLocaleDateString("en-UK") }}</p>
+            <p @click="deleteCard(note.id)" class="delete-card"> X </p>
+          </div>
+
+
         </div>
       
       </div>
@@ -117,6 +132,16 @@
     font-weight: bold;
   }
 
+.card-footer {
+  display: flex;
+  justify-content: space-between; 
+}
+
+.delete-card {
+  color: crimson;
+  font-weight: bold;
+  cursor: pointer;
+}
   .card-container {
     display: flex;
     flex-wrap: wrap;
